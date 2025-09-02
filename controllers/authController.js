@@ -537,7 +537,7 @@ exports.uploadAvatar = async (req, res, next) => {
 
     user.avatar = result.secure_url;
     await user.save();
-
+ 
     res.status(200).json({
       success: true,
       data: {

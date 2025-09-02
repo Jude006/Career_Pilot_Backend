@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
-const AIInsight = require('../models/AIInsight');
+const AIInsight = require('../models/AiInsight');
 const Application = require('../models/Application');
 const Job = require('../models/Job');
 const User = require('../models/User');
