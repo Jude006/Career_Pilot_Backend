@@ -105,11 +105,27 @@ exports.exportData = asyncHandler(async (req, res, next) => {
 exports.getExportHistory = asyncHandler(async (req, res, next) => {
   const userId = req.user.id;
   
-  // Get actual export history from database
   try {
-    // This would query a ExportHistory model in a real application
-    // For now, return empty array or mock data
-    const exportHistory = [];
+    // In a real application, you would query an ExportHistory model
+    // For now, we'll return mock data
+    const exportHistory = [
+      {
+        id: 1,
+        name: 'Applications_Export.csv',
+        date: new Date(Date.now() - 86400000).toISOString(),
+        format: 'CSV',
+        status: 'completed',
+        size: '2.1 KB'
+      },
+      {
+        id: 2,
+        name: 'Jobs_Export.xlsx',
+        date: new Date(Date.now() - 172800000).toISOString(),
+        format: 'Excel',
+        status: 'completed',
+        size: '3.4 KB'
+      }
+    ];
     
     res.status(200).json({
       success: true,
@@ -281,12 +297,15 @@ const generatePDF = async (data) => {
       });
       doc.on('error', reject);
       
-      // Add content to PDF
-      doc.fontSize(20).text('CareerPilot Export', { align: 'center' });
+      // Add user info at the top
+      doc.fontSize(16).text('CareerPilot Export', { align: 'center' });
+      doc.fontSize(12).text(`Exported by: ${userData.name || 'User'}`, { align: 'center' });
+      doc.text(`Export date: ${new Date().toLocaleDateString()}`, { align: 'center' });
       doc.moveDown();
       
-      if (data.applications && data.applications.length > 0) {
-        doc.fontSize(16).text('Job Applications');
+      // Rest of your PDF content...
+      if (data.applications) {
+        doc.fontSize(14).text('Job Applications');
         doc.moveDown();
         
         data.applications.forEach((app, index) => {
@@ -295,23 +314,6 @@ const generatePDF = async (data) => {
             .text(`   Status: ${app.status}`)
             .text(`   Applied: ${app.appliedDate ? new Date(app.appliedDate).toLocaleDateString() : 'N/A'}`)
             .text(`   Location: ${app.job?.location || 'N/A'}`);
-          doc.moveDown();
-        });
-      }
-      
-      if (data.jobs && data.jobs.length > 0) {
-        doc.addPage();
-        doc.fontSize(16).text('Job Listings');
-        doc.moveDown();
-        
-        data.jobs.forEach((job, index) => {
-          doc.fontSize(12)
-            .text(`${index + 1}. ${job.title || 'N/A'} at ${job.company || 'N/A'}`)
-            .text(`   Location: ${job.location || 'N/A'}`)
-            .text(`   Salary: ${job.salary || 'N/A'}`)
-            .text(`   Type: ${job.type || 'N/A'}`)
-            .text(`   Experience: ${job.experience || 'N/A'}`)
-            .text(`   Skills: ${job.skills ? job.skills.join(', ') : 'N/A'}`);
           doc.moveDown();
         });
       }

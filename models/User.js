@@ -78,7 +78,14 @@ const UserSchema = new mongoose.Schema({
   },
   lastLogin: {
     type: Date
-  }
+  },
+  resume: {
+    fileUrl: String,
+    fileName: String,
+    uploadedAt: Date,
+    textContent: String,
+    lastAnalyzed: Date
+  },
 });
 
 // Encrypt password using bcrypt
